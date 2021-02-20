@@ -4,6 +4,7 @@ const server = express();
 
 //* Import express session and setup a config obj
 const session = require("express-session");
+const knexSessionStore = require("connect-session-knex")(session);
 
 const sessionConfig = {
   name: "monkey",
@@ -15,6 +16,13 @@ const sessionConfig = {
   },
   resave: false,
   saveUninitialized: false,
+  store: new knexSessionStore({
+    knex: require("../data/db-config"),
+    tablename: "session",
+    sidfieldname: "sid",
+    createtable: true,
+    clearInterval: 60 * 60 * 1000,
+  }),
 };
 
 //* Use the session
